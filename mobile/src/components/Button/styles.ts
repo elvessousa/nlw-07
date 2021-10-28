@@ -10,6 +10,6 @@ export const styles = StyleSheet.create({
   },
   title: {},
   icon: {
-    marginLeft: 12,
+    marginRight: 12,
   },
 });
