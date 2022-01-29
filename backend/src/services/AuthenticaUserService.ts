@@ -54,6 +54,8 @@ class AuthenticateUserService {
       });
     }
 
+    console.log('User:', user);
+
     const token = sign(
       {
         user: {
@@ -62,12 +64,14 @@ class AuthenticateUserService {
           id: user.id,
         },
       },
-      process.env.JWT_SECRET,
+      String(process.env.JWT_SECRET),
       {
         subject: user.id,
         expiresIn: '1d',
       }
     );
+
+    console.log('Token:', token);
 
     return { token, user };
   }

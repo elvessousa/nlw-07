@@ -13,7 +13,7 @@ export function Home() {
   return (
     <View style={styles.container}>
       <Header />
-      <Text>Olá, Teum!</Text>
+      <Text style={{ color: '#fff' }}>User: {user}</Text>
       <MessageList />
       {user ? <SendMessageForm /> : <SigninBox />}
     </View>

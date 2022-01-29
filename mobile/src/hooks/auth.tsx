@@ -23,8 +23,6 @@ type AuthContextData = {
   signOut: () => Promise<void>;
 };
 
-export const AuthContext = createContext({} as AuthContextData);
-
 type AuthProviderProps = {
   children: React.ReactNode;
 };
@@ -42,6 +40,8 @@ type AuthorizationResponse = {
   type?: string;
 };
 
+export const AuthContext = createContext({} as AuthContextData);
+
 export function AuthProvider({ children }: AuthProviderProps) {
   const [isSigningIn, setIsSigningIn] = useState(true);
   const [user, setUser] = useState<User | null>(null);
@@ -56,23 +56,27 @@ export function AuthProvider({ children }: AuthProviderProps) {
         authUrl,
       })) as AuthorizationResponse;
 
+      console.log('Code:', authSessionResponse.params.code);
+
       if (
         authSessionResponse.type === 'success' &&
         authSessionResponse.params.error !== 'access_denied'
       ) {
-        const authResponse = await api.post('/authenticate', {
+        const authResponse = await api.post('authenticate', {
           code: authSessionResponse.params.code,
         });
+
+        console.log(authResponse.data);
 
         const { user, token } = authResponse.data as AuthResponse;
         api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
         await AsyncStorage.setItem(USER_STORAGE, JSON.stringify(user));
-        await AsyncStorage.setItem(TOKEN_STORAGE, JSON.stringify(token));
+        await AsyncStorage.setItem(TOKEN_STORAGE, token);
 
         setUser(user);
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
     } finally {
       setIsSigningIn(false);
     }
